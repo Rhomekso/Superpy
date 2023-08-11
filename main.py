@@ -5,7 +5,7 @@ import os
 import sys
 from rich import print
 from datetime import date
-from all_functions import *
+from inventory import *
 
 
 # Do not change these lines.
@@ -72,12 +72,13 @@ if __name__ == "__main__":
 # this shows todays date 
     if args.command == "today": 
         info_today = csv_reader.create_date_today()
+        print(f"This is the current date: {info_today}")
 
 # This lets you jump forward in days 
     if args.command == "forward":
         days_forward = args.add
         info_forward = csv_reader.change_forward(days_forward)
-        print(f"The date has been changed by {days_forward} days")
+        print(f"The date has been changed by {days_forward} day(s)")
         print(f"Now we are jumping 'forward': {info_forward}")
 
 # This lets you jump backwards/rewind days 
@@ -87,7 +88,7 @@ if __name__ == "__main__":
         current_date = CurrentDate(info_today)
         rewind_output = current_date.go_to_the_past(days_rewind)
         info_rewind = csv_reader.change_rewind(days_rewind)
-        print(f"The date has been changed by {days_rewind} days")
+        print(f"The date has been changed by {days_rewind} day(s)")
         print(f"With this we are going to 'rewind' time: {rewind_output}")
 
 # Buying a product also adds it to file if it doesnt exists 
@@ -123,15 +124,15 @@ if __name__ == "__main__":
 
 # shows products sold
     if args.sold:
-        inventory.product_sold()
+        inventory.product_sold(str(csv_reader.create_date_today()))
 
 # reports the revenue on certain dates
     if args.revenue:
-        sales.get_revenue()
+        sales.get_revenue(str(csv_reader.read_today()))
 
 # reports the profit 
     if args.profit:
-        sales.get_profit()
+        sales.get_profit(str(csv_reader.read_today()))
 
 # makes a full reset of the date 
     if args.reset:

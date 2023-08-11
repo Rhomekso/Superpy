@@ -18,12 +18,12 @@ console = Console()
 
 class Inventory:
 
-    def __init__(self, allinfo):
-        self.allinfo = allinfo
+    def __init__(self, filename):
+        self.filename = filename
 
 # this shows inventory information 
     def inventory_info(self):
-        with open(self.allinfo, 'r') as file:
+        with open(self.filename, 'r') as file:
             reader = csv.DictReader(file)
             for row in reader:
                 for key, value in row.items():
@@ -31,7 +31,7 @@ class Inventory:
 
 # this shows sales information
     def sales_info(self):
-        with open(self.allinfo, 'r') as file:
+        with open(self.filename, 'r') as file:
             reader = csv.DictReader(file)
             for row in reader:
                 for key, value in row.items():
@@ -40,23 +40,21 @@ class Inventory:
 
 # this shows all products and quantity
     def all_products(self):
-        with open(self.allinfo, "r") as file:
+        with open(self.filename, "r") as file:
             read = csv.DictReader(file)
             for row in read:
                 print(f"Product: {row['product name']}\nQuantity: {row['quantity']}")
 
 # this show the product buy date and expiration date
     def product_bought(self):
-        with open(self.allinfo, "r") as file:
+        with open(self.filename, "r") as file:
             read = csv.DictReader(file)
             for row in read:
                 print(f"This is the buy date {row['buy date']}, Expiration date {row['expiration date']}")
 
 # this shows products sold and if it was expired
-    def product_sold(self): 
-        csv_reader = CsvReader("info_today.csv") 
-        info_today = str(csv_reader.create_date_today())
-        with open(self.allinfo, "r") as sold:
+    def product_sold(self, info_today): 
+        with open(self.filename, "r") as sold:
             check_sold = csv.DictReader(sold)
             for row in check_sold: 
                 exp_date = row['expiration date']
@@ -70,7 +68,7 @@ class Inventory:
 # this is buying a product 
     def buy_product(self, product_name, price, expiration_date, quantity, today):
         fieldnames = ['id', 'product name','buy date','sell price','expiration date','quantity']
-        with open(self.allinfo, "r+", newline="") as buying_prod:
+        with open(self.filename, "r+", newline="") as buying_prod:
             writer = csv.DictWriter(buying_prod, fieldnames=fieldnames, delimiter=",") 
             if os.path.exists("inventory.csv") == False:
                 writer.writeheader()
@@ -98,12 +96,11 @@ class Inventory:
         filename = "inventory.csv"
         tempfile = NamedTemporaryFile(mode="w", delete=False)
         fieldnames = ['id', 'product name', 'buy date', 'sell price', 'expiration date', 'quantity']
-        with open(self.allinfo, "r+", newline="") as sell_prod, tempfile:
+        with open(self.filename, "r+", newline="") as sell_prod, tempfile:
             writer = csv.DictWriter(tempfile, fieldnames=fieldnames, delimiter=",")
             reader = csv.DictReader(sell_prod, fieldnames=fieldnames, delimiter=",")
             if os.path.exists("inventory.csv"):
                 prod_found = False
-                # writer.writeheader()
                 for lines in reader:
                     if product_name == lines["product name"]:
                         prod_found = True
@@ -140,12 +137,10 @@ class Inventory:
             shutil.move(tempfile.name, filename)
 
 # This reports the revenue making sure the date is the same ass the sell date in file
-    def get_revenue(self):
-        csv_reader = CsvReader("info_today.csv")
-        date_today = str(csv_reader.read_today())
+    def get_revenue(self,date_today):
         total_sum = 0
         rev_made = True
-        with open(self.allinfo, "r") as revenue:
+        with open(self.filename, "r") as revenue:
             reader = csv.DictReader(revenue)
             for row in reader:
                 sell_date = row["sell date"]
@@ -165,12 +160,12 @@ class Inventory:
                 return total_sum
             
 # This reports the profit making sure the date is the same ass the sell date in file
-    def get_profit(self):
-        csv_reader = CsvReader("info_today.csv")
-        date_today = str(csv_reader.read_today())
+    def get_profit(self, date_today):
+        # csv_reader = CsvReader("info_today.csv")
+        # date_today = str(csv_reader.read_today())
         total_profit = 0 
         prof_made = True
-        with open(self.allinfo, "r") as profit:
+        with open(self.filename, "r") as profit:
             reader = csv.DictReader(profit)
             for row in reader:
                 sell_date = row["sell date"]

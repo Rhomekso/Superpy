@@ -6,7 +6,7 @@
 # make sure then when the date has been changed it calls back the new date
 # same thing applies when changing the date to the past
 
-from all_functions import *
+from inventory import *
 from current_date import *
 from rich.console import Console
 import os
@@ -34,9 +34,7 @@ class CsvReader:
         if os.path.exists(self.filename):
             with open(self.filename, "r") as today:
                 for row in today:
-                    print(row)
-
-                return row
+                    return row
         if not os.path.exists(self.filename):
             print("ERROR: File not available")
 
@@ -45,7 +43,7 @@ class CsvReader:
             with open(self.filename, "w") as file:
                 new_current_date = date.today()
                 file.write(str(new_current_date))
-                print(f"This is the new date: {new_current_date}")
+                print(f"You have created a new file")
                 
                 return new_current_date
             
@@ -54,7 +52,7 @@ class CsvReader:
                 reader = csv.reader(changed_file)
                 for line in reader:
                     date_object = datetime.strptime(line[0], "%Y-%m-%d").date()
-                    print(f"This is the current date: {date_object}")
+                    # print(f"Reading existing file")
                     
                     return date_object
 
