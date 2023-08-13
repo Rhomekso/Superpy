@@ -1,19 +1,8 @@
-# make a code that reads the csv file.
-# if the file not exests then make a new one
-# if needed use try argument
-# make sure that if the file is not exists return an ExceptionError
-# if the date has been changed then store it in the file 
-# make sure then when the date has been changed it calls back the new date
-# same thing applies when changing the date to the past
-
 from inventory import *
 from current_date import *
-from rich.console import Console
 import os
-import argparse
 import csv
 
-console = Console()
 current_date = CurrentDate(date.today())
 
 class CsvReader:
@@ -24,10 +13,9 @@ class CsvReader:
     def reset_date(self):
         if os.path.exists(self.filename):
             os.remove(self.filename)
-            print(f"Cautian!! File: {self.filename} has been removed.")
+            print(f"Caution!! File: '{self.filename}' has been removed.")
         else:
             print(f"The file you are looking for does not exixts: {self.filename}")
-
 
 # This reads the info_today.csv file if it exists
     def read_today(self):
@@ -38,6 +26,7 @@ class CsvReader:
         if not os.path.exists(self.filename):
             print("ERROR: File not available")
 
+# this is creating a today date if doesnt exists and put it in a file: info_today.csv
     def create_date_today(self):
         if not os.path.exists(self.filename):
             with open(self.filename, "w") as file:
@@ -52,10 +41,10 @@ class CsvReader:
                 reader = csv.reader(changed_file)
                 for line in reader:
                     date_object = datetime.strptime(line[0], "%Y-%m-%d").date()
-                    # print(f"Reading existing file")
                     
                     return date_object
 
+# this is changing the date forward in info_today.csv
     def change_forward(self,days):
         current_date = CurrentDate(self.create_date_today())
         if os.path.exists(self.filename):
@@ -65,6 +54,7 @@ class CsvReader:
 
                 return current_date.time()
 
+# this is changing the date backwards(rewind) in info_today.csv
     def change_rewind(self,days):
         current_date = CurrentDate(self.create_date_today())
         if os.path.exists(self.filename):

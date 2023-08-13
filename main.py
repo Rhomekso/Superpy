@@ -58,8 +58,6 @@ subparser_sell.add_argument("--quantity", help="desired quantity", type=int, req
 
 args = parser.parse_args()
 
-# functions needed
-
 # create an usage guide
 # using the argparse module to add arguments and sub arguments to make sure the help information is clear and readable
 

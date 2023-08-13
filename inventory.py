@@ -1,9 +1,6 @@
-import argparse
 import csv
 import os
-import sys
 import shutil
-import matplotlib as plt
 from tempfile import NamedTemporaryFile
 from rich.console import Console
 from rich.traceback import install
@@ -11,6 +8,7 @@ from rich import print
 from datetime import datetime
 from current_date import *
 from csv_reader import *
+from matplotlib import pyplot as plt
 
 # All the needed variables in the program
 install()
@@ -90,7 +88,6 @@ class Inventory:
                                 'expiration date': expiration_date, 
                                 'quantity': quantity})
 
-
 # this is selling a product
     def sell_product(self, product_name, quantity):
         filename = "inventory.csv"
@@ -106,7 +103,7 @@ class Inventory:
                         prod_found = True
                         product_quantity = lines["quantity"]
                         new_stock = int(product_quantity) - quantity
-                        print(f"Updating stock:\nproduct: {lines['product name']}\nquantity: {new_stock}")
+                        print(f"-Updating stock-\nproduct: {lines['product name']}\nquantity sold: {quantity}\ncurrent quantity: {new_stock}")
                         row = {
                             "id": lines["id"],
                             "product name": lines["product name"],
@@ -136,7 +133,7 @@ class Inventory:
                     print(f"ERROR product: {product_name}, not in stock")
             shutil.move(tempfile.name, filename)
 
-# This reports the revenue making sure the date is the same ass the sell date in file
+# This reports the revenue making sure the date is the same ass the sell date in sales file
     def get_revenue(self,date_today):
         total_sum = 0
         rev_made = True
@@ -159,10 +156,8 @@ class Inventory:
 
                 return total_sum
             
-# This reports the profit making sure the date is the same ass the sell date in file
+# This reports the profit making sure the date is the same ass the sell date in sales file
     def get_profit(self, date_today):
-        # csv_reader = CsvReader("info_today.csv")
-        # date_today = str(csv_reader.read_today())
         total_profit = 0 
         prof_made = True
         with open(self.filename, "r") as profit:
@@ -183,12 +178,6 @@ class Inventory:
 
             return total_profit
 
-# class Statisticks:
-
-
 
 # functions needed
-
-# generate profit report
-# generate export report
 # visualize statistics  using matplotlib
