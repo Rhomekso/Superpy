@@ -178,6 +178,20 @@ class Inventory:
 
             return total_profit
 
+    def get_visualization(self):
+        column_index = 4 #index of the last column
+        column_datax = []
+        column_datay = []
+        with open(self.filename, "r") as sales:
+            reader = csv.DictReader(sales)
+            for row in reader:
+                if len(row) > column_index:
+                    column_datax.append(row["sell price"])
+                    column_datay.append(row["sell date"])
+                    plt.plot(column_datax, column_datay, marker="o", linestyle="-")
+                    plt.title("Csv data graph")
+                    plt.xlabel("Price in dollars")
+                    plt.ylabel("Date of product sold")
+        plt.show()
 
-# functions needed
-# visualize statistics  using matplotlib
+
