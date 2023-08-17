@@ -140,3 +140,4 @@ if __name__ == "__main__":
 
     if args.get_viz:
         sales.get_visualization()
+        # sales.revenue_viz()

@@ -167,7 +167,7 @@ class Inventory:
                 if date_today == sell_date:
                     prof_made = True
                     caculate_profit = float(row["sell price"]) - float(row["bought price"])
-                    total_profit = caculate_profit
+                    total_profit += caculate_profit
             if prof_made == True:
                 print(f"This is today's date: {date_today}")
                 print(f"Total profit: {total_profit}")
@@ -179,19 +179,34 @@ class Inventory:
             return total_profit
 
     def get_visualization(self):
-        column_index = 4 #index of the last column
-        column_datax = []
-        column_datay = []
+        date_prices = {}  # Dictionary to store date as key and prices as values
+        
         with open(self.filename, "r") as sales:
             reader = csv.DictReader(sales)
             for row in reader:
-                if len(row) > column_index:
-                    column_datax.append(row["sell price"])
-                    column_datay.append(row["sell date"])
-                    plt.plot(column_datax, column_datay, marker="o", linestyle="-")
-                    plt.title("Csv data graph")
-                    plt.xlabel("Price in dollars")
-                    plt.ylabel("Date of product sold")
+                date = row["sell date"]
+                profit = float(row["sell price"]) - float(row["bought price"])
+                revenue = float(row["sell price"])
+                
+                if date in date_prices:
+                    date_prices[date]["profit"] += profit
+                    date_prices[date]["revenue"] += revenue
+                else:
+                    date_prices[date] = {"profit": profit, "revenue": revenue}
+        
+        dates = list(date_prices.keys()) #keys() return a view object of the dict as a list
+        profit_datay = [date_prices[date]["profit"] for date in dates]
+        revenue_datay = [date_prices[date]["revenue"] for date in dates]
+        
+        plt.plot(dates, profit_datay, marker="o", linestyle="-", label="Profit")
+        plt.plot(dates, revenue_datay, marker="o", linestyle="-", label="Revenue")
+        
+        plt.xlabel("Date sold")
+        plt.ylabel("Price")
+        plt.title("CSV Data Graph")
+        
+        plt.legend()
+        plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+        
         plt.show()
-
 
