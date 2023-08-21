@@ -29,7 +29,7 @@ parser.add_argument("--sales", action="store_true", help="shows product sales in
 parser.add_argument("--revenue", action="store_true", help="shows revenue information")
 parser.add_argument("--reset", action="store_true", help="resets and deletes date file")
 parser.add_argument("--profit", action="store_true", help="shows profit information")
-parser.add_argument("--get_viz", action="store_true", help="shows graph visuals")
+parser.add_argument("--get_viz", action="store_true", help="shows visual information in a graph")
 
 # Command input
 subparsers = parser.add_subparsers(dest="command", help="Information on adjusting the data")
@@ -140,4 +140,3 @@ if __name__ == "__main__":
 
     if args.get_viz:
         sales.get_visualization()
-        # sales.revenue_viz()

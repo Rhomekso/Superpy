@@ -5,10 +5,10 @@ from tempfile import NamedTemporaryFile
 from rich.console import Console
 from rich.traceback import install
 from rich import print
-from datetime import datetime
 from current_date import *
 from csv_reader import *
 from matplotlib import pyplot as plt
+
 
 # All the needed variables in the program
 install()
@@ -119,14 +119,6 @@ class Inventory:
                         writer.writerow(row)
                         # this makes sure the file stays intact and moves to the last if statement
                     else:
-                        row = {
-                            "id": lines["id"],
-                            "product name": lines["product name"],
-                            "buy date": lines["buy date"],
-                            "sell price": lines["sell price"],
-                            "expiration date": lines["expiration date"],
-                            "quantity": lines["quantity"]
-                        }
                         writer.writerow(lines)
                         # when product is not in file send error message
                 if prod_found == False:
@@ -180,33 +172,36 @@ class Inventory:
 
     def get_visualization(self):
         date_prices = {}  # Dictionary to store date as key and prices as values
-        
         with open(self.filename, "r") as sales:
             reader = csv.DictReader(sales)
             for row in reader:
                 date = row["sell date"]
                 profit = float(row["sell price"]) - float(row["bought price"])
                 revenue = float(row["sell price"])
-                
+                # checks if the date is in dict date_prices if so add them together else leave it
                 if date in date_prices:
                     date_prices[date]["profit"] += profit
                     date_prices[date]["revenue"] += revenue
                 else:
                     date_prices[date] = {"profit": profit, "revenue": revenue}
-        
-        dates = list(date_prices.keys()) #keys() return a view object of the dict as a list
+        # with the data found and put in lists put them in variables to use in plot
+        dates = list(sorted(date_prices))
         profit_datay = [date_prices[date]["profit"] for date in dates]
         revenue_datay = [date_prices[date]["revenue"] for date in dates]
-        
-        plt.plot(dates, profit_datay, marker="o", linestyle="-", label="Profit")
-        plt.plot(dates, revenue_datay, marker="o", linestyle="-", label="Revenue")
-        
+        #plot methods and information
+        plt.style.use("seaborn-v0_8-poster")
+        plt.plot(dates, profit_datay, marker="s", linestyle="--", label="Profit")
+        plt.plot(dates, revenue_datay, marker="s", linestyle="-", label="Revenue")
+        #plot graph titles
         plt.xlabel("Date sold")
         plt.ylabel("Price")
         plt.title("CSV Data Graph")
-        
+        # plot layout
         plt.legend()
+        plt.grid(True)
         plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+        plt.tight_layout() # makes the lay out tighter so its better to read
         
+        plt.savefig("CSV Data Graph", format="pdf")  # Save the plot as a PDF file
         plt.show()
 

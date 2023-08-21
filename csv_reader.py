@@ -15,7 +15,15 @@ class CsvReader:
             os.remove(self.filename)
             print(f"Caution!! File: '{self.filename}' has been removed.")
         else:
-            print(f"The file you are looking for does not exixts: {self.filename}")
+            #this lets the user know that the file has been created with the current date
+            if not os.path.exists(self.filename):
+                with open(self.filename, "w") as file:
+                    new_current_date = date.today()
+                    file.write(str(new_current_date))
+                    print(f"You have created a new file")
+                    print(f"This is the current date: {new_current_date}")
+                    
+                    return new_current_date
 
 # This reads the info_today.csv file if it exists
     def read_today(self):
