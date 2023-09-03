@@ -37,6 +37,10 @@ subparsers = parser.add_subparsers(dest="command", help="Information on adjustin
 # CLI for the date of today
 subparser_date = subparsers.add_parser("today", help="This shows today's date")
 
+# CLI for the set date 
+subparser_set = subparsers.add_parser("set", help="This sets the date")
+subparser_set.add_argument("--date", help="set date(YYYY-MM-DD)", type=str, required=True)
+
 # CLI for the date of forward
 subparser_forward = subparsers.add_parser("forward",help="Jumping forward")
 subparser_forward.add_argument("--add", help="add days (DD)", type=int, required=True)
@@ -72,6 +76,11 @@ if __name__ == "__main__":
     if args.command == "today": 
         info_today = csv_reader.create_date_today()
         print(f"This is the current date: {info_today}")
+
+    if args.command == "set":
+        set_date = args.date
+        set_today = csv_reader.set_current_date(set_date)
+        print(f"The date has been set to {set_today}")
 
 # This lets you jump forward in days 
     if args.command == "forward":
@@ -140,3 +149,12 @@ if __name__ == "__main__":
 
     if args.get_viz:
         sales.get_visualization()
+
+
+
+# Set a date method
+# Complete README.md // done
+# Buy/sell product should give an error of inventory is empty // done
+# Product should not be sold when there is no inventory // done
+# Add sold product to sales.csv
+# Mention price when asking for profit and revenue // done

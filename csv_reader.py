@@ -52,6 +52,15 @@ class CsvReader:
                     
                     return date_object
 
+    def set_current_date(self,full_date):
+        current_date = CurrentDate(self.create_date_today())
+        if os.path.exists(self.filename):
+            with open(self.filename, "w") as file:
+                file.write(str(current_date.set_date(full_date)))
+                print("Caution, the date has been changed")
+
+                return current_date.time()
+
 # this is changing the date forward in info_today.csv
     def change_forward(self,days):
         current_date = CurrentDate(self.create_date_today())
