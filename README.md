@@ -1,12 +1,15 @@
 # Working with the Superpy information tool
 
-## Index
+## Contents
 
+- [Requirements](#requirements)
 - [Files](#files)
 - [Command line interface](#command-line-interface)
 - [Examples](#examples)
 
+    - create
     - today
+    - set
     - forward
     - rewind
     - buy
@@ -17,11 +20,39 @@
 - [Finally](#finally)
     - [Commands](#commands)
 
+---
 
+### Requirements
+Before we start we need to make sure we have the latest version of python installed.
+Ideally Python 3 or higher.
+
+In the directory there is a file called:
+
+        requirements.txt
+
+As we need a couple of modules in this project you can pip install the information in that file.
+
+Use:
+
+        pip freeze > requirements.txt
+
+To install everything needed.
 
 ---
 
-### Files 
+If you only want to use the modules needed for this project we need do this first:
+
+        pip install pipreqs
+
+Next we need to do this:
+
+        pipreqs --force
+
+With this we can make sure we only use the modules needed for this project.
+
+###### [Page-Up](#contents)
+---
+## Files 
 
 - sales.csv
 - inventory.csv
@@ -29,7 +60,7 @@
 
 _Looking in the file directory these files should be availabe._
 
-###### [Page-Up](#index)
+###### [Page-Up](#contents)
 
 
 ---
@@ -58,7 +89,7 @@ All product information and even profit and revenue and more.
 
 Now we going to go over the commands inside the tool with examples.
 
-###### [Page-Up](#index)
+###### [Page-Up](#contents)
 
 ## Examples
 
@@ -75,14 +106,35 @@ and then the command.
 ## **First** 
 We are going to start with the date manager:
 
+### Create
+This command creates the the ``info_today.csv`` if it already exists then it return the current date.
+
+```python
+python3 main.py create
+```
+
 ### Today 
 
 This command show us the date of today.
-What is going to happen here is, when there is no file of the info_today.csv, it will create one and set the date of today(real time)
+Basicly it reads the ``info_today.csv`` file.
+If the file does not exist, it returns an error.
+
+```python
+python3 main.py today
+```
+
+### Set
+
+This command makes sure you can set a date with following format
+YYYY-MM-DD. With this you can move forwards or backwards.
+For example:
+```python
+python3 main.py set --date 2023-10-25
+```
 
 ### Forward
 
-This allows us to jump forward the x amount of days we want to, keep in mind the input we give is **(dd)**.
+This allows us to jump forward the x amount of **DAYS** we want to, keep in mind the input we give is **(dd)**.
 
 For example:
 ```python
@@ -92,21 +144,21 @@ python3 main.py forward --add 05 or 5
 
 ### Rewind
 
-This essentially does the same thing as **forward** but then moving the date backwards.
+This essentially does the same thing as **FORWARD** but then moving the date backwards.
 
 for example:
 ```python
 python3 main.py rewind --sub 05 or 5
 ```
 
-keep in mind that when changing the date 
+keep in mind that when changing the date by **DAYS**,
 ```python
 --add or --sub
 ```
 
 is required.
 
-###### [Page-Up](#index)
+###### [Page-Up](#contents)
 
 ## **Next**
 
@@ -118,18 +170,19 @@ for example:
 python3 main.py buy --product cheese --price 4.5 --quantity 15 --expiration 2023-10-22
 ```
 
-once you input this command you will notice a change in the inventory.csv file and can use it to sell it.
+Once you input this command you will notice a change in the ``inventory.csv`` file and can use it to sell it.
 
 ---
 ### Selling
-This sells the product from the inventory.csv file and adjusts the quantity,
+This sells the product from the ``inventory.csv`` file and adjusts the quantity,
 if by any chance the product runs out you will receive notification that the product is no longer in stock also if the product is not in stock at all you will also receive a notification about it.
+This also puts information given ,to ``sales.csv`` file
 
 for example:
 ```python
 python3 main.py sell --product orange --quantity 10
 ```
-###### [Page-Up](#index)
+###### [Page-Up](#contents)
 
 ## **Finally**
 
@@ -143,7 +196,7 @@ python3 main.py -h
 
 With this command we can call the information on the superpy tool. This shows us the available commands with this tool so we can clearly see what they do and what information they give.
 
-###### [Page-Up](#index)
+###### [Page-Up](#contents)
 
 ---
 
@@ -208,6 +261,6 @@ This command shows the vizual information in a graph.
 Below is a preview image of what the help information looks like.
 
 
-![superpy -h information](image.png)
+![superpy -h information](Image.png)
 
-###### [Page-Up](#index)
+###### [Page-Up](#contents)

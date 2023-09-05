@@ -1,10 +1,6 @@
 # Imports
 import argparse
-import csv
-import os
-import sys
 from rich import print
-from datetime import date
 from inventory import *
 
 
@@ -33,6 +29,8 @@ parser.add_argument("--get_viz", action="store_true", help="shows visual informa
 
 # Command input
 subparsers = parser.add_subparsers(dest="command", help="Information on adjusting the data")
+
+subparser_date = subparsers.add_parser("create", help="This creates date of today")
 
 # CLI for the date of today
 subparser_date = subparsers.add_parser("today", help="This shows today's date")
@@ -72,8 +70,11 @@ if __name__ == "__main__":
     inventory = Inventory(INVENTORY_FILE)
     sales = Inventory(SALES_FILE)
 
-# this shows todays date 
     if args.command == "today": 
+        info_today = csv_reader.read_today()
+
+# this shows todays date 
+    if args.command == "create": 
         info_today = csv_reader.create_date_today()
         print(f"This is the current date: {info_today}")
 
@@ -107,6 +108,8 @@ if __name__ == "__main__":
         quant = args.quantity
         today = csv_reader.create_date_today()
         prod_buy = inventory.buy_product(prod_name, price, exp_date, quant, today)
+        print("The following has been bought.")
+        print(f"Product: {prod_name}, Price: {price}, Expiration date: {exp_date}, Quantity: {quant}")
 
 # Sells the product if there is enough stock 
     if args.command == "sell":
@@ -149,12 +152,3 @@ if __name__ == "__main__":
 
     if args.get_viz:
         sales.get_visualization()
-
-
-
-# Set a date method
-# Complete README.md // done
-# Buy/sell product should give an error of inventory is empty // done
-# Product should not be sold when there is no inventory // done
-# Add sold product to sales.csv
-# Mention price when asking for profit and revenue // done

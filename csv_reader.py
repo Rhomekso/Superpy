@@ -13,7 +13,7 @@ class CsvReader:
     def reset_date(self):
         if os.path.exists(self.filename):
             os.remove(self.filename)
-            print(f"Caution!! File: '{self.filename}' has been removed.")
+            print(f"[bold red]CAUTION:[/bold red]!! File: '{self.filename}' has been removed.")
         else:
             #this lets the user know that the file has been created with the current date
             if not os.path.exists(self.filename):
@@ -30,9 +30,9 @@ class CsvReader:
         if os.path.exists(self.filename):
             with open(self.filename, "r") as today:
                 for row in today:
-                    return row
+                    print(f"This is the current date: {row}")
         if not os.path.exists(self.filename):
-            print("ERROR: File not available")
+            print("[bold red]ERROR:[/bold red]: File not available")
 
 # this is creating a today date if doesnt exists and put it in a file: info_today.csv
     def create_date_today(self):
@@ -40,7 +40,7 @@ class CsvReader:
             with open(self.filename, "w") as file:
                 new_current_date = date.today()
                 file.write(str(new_current_date))
-                print(f"You have created a new file")
+                print(f"[bold dark_green]-YOU HAVE CREATED A NEW FILE-[/bold dark_green]")
                 
                 return new_current_date
             
@@ -57,7 +57,7 @@ class CsvReader:
         if os.path.exists(self.filename):
             with open(self.filename, "w") as file:
                 file.write(str(current_date.set_date(full_date)))
-                print("Caution, the date has been changed")
+                print("[bold red]CAUTION:[/bold red], the date has been changed")
 
                 return current_date.time()
 
@@ -67,7 +67,7 @@ class CsvReader:
         if os.path.exists(self.filename):
             with open(self.filename, "w") as file:
                 file.write(str(current_date.go_to_the_future(days)))
-                print("Caution, the date has been changed")
+                print("[bold red]CAUTION:[/bold red], the date has been changed")
 
                 return current_date.time()
 
@@ -77,6 +77,6 @@ class CsvReader:
         if os.path.exists(self.filename):
             with open(self.filename, "w") as file:
                 file.write(str(current_date.go_to_the_past(days)))
-                print("Caution, the date has been changed")
+                print("[bold red]CAUTION:[/bold red], the date has been changed")
 
                 return current_date.time()

@@ -1,6 +1,7 @@
 import csv
 import os
 import shutil
+import random
 from tempfile import NamedTemporaryFile
 from rich.console import Console
 from rich.traceback import install
@@ -8,7 +9,6 @@ from rich import print
 from current_date import *
 from csv_reader import *
 from matplotlib import pyplot as plt
-
 
 # All the needed variables in the program
 install()
@@ -48,7 +48,7 @@ class Inventory:
         with open(self.filename, "r") as file:
             read = csv.DictReader(file)
             for row in read:
-                print(f"This is the buy date {row['buy date']}, Expiration date {row['expiration date']}")
+                print(f"Product: {row['product name']}, Buy date {row['buy date']}, Expiration date {row['expiration date']}")
 
 # this shows products sold and if it was expired
     def product_sold(self, info_today): 
@@ -61,13 +61,14 @@ class Inventory:
                 if info_today <= exp_date:
                     print(f"{product} was sold for: {sell_price} with expiration date of: {exp_date}")
                 else:
-                    print(f"ERROR: {product} has been expired {exp_date}")
+                    print(f"[bold red]ERROR:[/bold red] {product} has been expired {exp_date}")
 
 # this is buying a product 
     def buy_product(self, product_name, price, expiration_date, quantity, today):
         fieldnames = ['id', 'product name','buy date','sell price','expiration date','quantity']
         with open(self.filename, "r+", newline="") as buying_prod:
-            writer = csv.DictWriter(buying_prod, fieldnames=fieldnames, delimiter=",") 
+            writer = csv.DictWriter(buying_prod, fieldnames=fieldnames, delimiter=",")
+            # checks if the file exists otherwise makes a header and buys the product
             if os.path.exists("inventory.csv") == False:
                 writer.writeheader()
                 id = 1
@@ -77,6 +78,7 @@ class Inventory:
                                 'sell price': price, 
                                 'expiration date': expiration_date, 
                                 'quantity': quantity})
+            # This adds it to the final line of the inventory file
             else:
                 final_line = buying_prod.readlines()[-1]
                 last_line = final_line.split(",")
@@ -89,29 +91,22 @@ class Inventory:
                                 'quantity': quantity})
 
 # this is selling a product
-
-# use a boolean that checks if a product is sold (sold = True) then make sure to append it to the sales.csv
-# also check if the product sold == product sales list and quantity is < quantity in sales list and then append the product sold to the product list (product sold += product in sales list)
     def sell_product(self, product_name, quantity):
         filename = "inventory.csv"
-        # sales_file = "sales.csv" TODO
         tempfile = NamedTemporaryFile(mode="w", delete=False)
         fieldnames = ['id', 'product name', 'buy date', 'sell price', 'expiration date', 'quantity']
-        # sales_fieldnames = ["id","product name","bought price","bougt id","sell date","sell price","quantity sold"]TODO
 
         # checks if file exists and does a status check if the file is empty (== 0)
         if not os.path.exists(self.filename) or os.stat(self.filename).st_size == 0:
-            print("ERROR: Inventory file is empty or does not exist.")
+            print("[bold red]ERROR:[/bold red]: Inventory file is empty or does not exist.")
             return
-        
+        # opens the inventory file and the temp file
         with open(self.filename, "r+", newline="") as sell_prod, tempfile:
             writer = csv.DictWriter(tempfile, fieldnames=fieldnames, delimiter=",")
             reader = csv.DictReader(sell_prod, fieldnames=fieldnames, delimiter=",")
-            # sales_writer = csv.DictWriter(sales_file, fieldnames=sales_fieldnames, delimiter=",")TODO
-
+            # checks if the product names are equal then the prod_found to True
             if os.path.exists("inventory.csv"):
-                prod_found = False
-                # sold = False TODO
+                prod_found = False # set prod_found to False
                 for lines in reader:
                     if product_name == lines["product name"]:
                         prod_found = True
@@ -119,11 +114,12 @@ class Inventory:
 
                         # checks if the quantity is more than quantity in inventory
                         if quantity > int(product_quantity):
-                            print(f"ERROR: Not enough {product_name} in stock. Available quantity: {product_quantity}")
+                            print(f"[bold red]ERROR:[/bold red]: Not enough {product_name} in stock. Available quantity: {product_quantity}")
                             return 
-                        
+                        # this updates the stock if a sale has been made and add it to sales.csv
                         new_stock = int(product_quantity) - quantity
-                        print(f"-Updating stock-\nproduct: {lines['product name']}\nquantity sold: {quantity}\ncurrent quantity: {new_stock}")
+                        print(f"[bold dark_green]-UPDATING STOCK-:[/bold dark_green]\nProduct: {lines['product name']}\nQuantity sold: {quantity}\nCurrent quantity: {new_stock}")
+                        
                         row = {
                             "id": lines["id"],
                             "product name": lines["product name"],
@@ -132,33 +128,58 @@ class Inventory:
                             "expiration date": lines["expiration date"],
                             "quantity": new_stock
                         }
+                        self.add_sale_product(row, quantity)
                         # if the new stock reaches 0 stop iterating over product and continue
                         if  new_stock == 0:
-                            print(f"{product_name} out of stock, quantity: {new_stock}")
+                            print(f"[bold red]ERROR:[/bold red] {product_name} out of stock, quantity: {new_stock}")
                             continue
                         writer.writerow(row)
+                        
                     else:
                         writer.writerow(lines)
                         # when product is not in file send error message
                 if prod_found == False:
-                    print(f"ERROR product: {product_name}, not in stock")
+                    print(f"[bold red]ERROR:[/bold red] Product: {product_name}, not in stock")
 
             # this makes sure that when product reaches 0 it deletes it from the inventory file
+            
             shutil.move(tempfile.name, filename)
 
-
-    def add_sale_product(self,sale_record ):
+    # this add the sold product to the sales.csv
+    def add_sale_product(self, sale_record, quantity_sold):
         filename = "sales.csv"
-        fieldnames = "id","product name","bought price","bougt id","sell date","sell price"
-        with open(self.filename, "a", newline="") as sales:
-            writer = csv.DictWriter(filename, fieldnames=fieldnames, delimiter=",")
-            writer.writerow(sale_record)
+        tempfile = NamedTemporaryFile(mode="w", delete=False)
+        fieldnames = ["id", "product name", "bought price", "bought id", "sell date", "sell price", "quantity sold"]
+        # opening the sales.csv and tempfile
+        with open(filename, "r+", newline="") as sales, tempfile:
+            writer = csv.DictWriter(tempfile, fieldnames=fieldnames, delimiter=",")
+            reader = csv.DictReader(sales, fieldnames=fieldnames, delimiter=",")
+            # if inventory product is the same as sales product
+            for sale in reader:
+                if sale_record["product name"] == sale["product name"]:
+                    sale["quantity"] = str(int(sale["quantity sold"]) + quantity_sold)
+                    # then update the row
+                    writer.writerow({
+                        "id": sale_record["id"],
+                        "product name": sale["product name"],
+                        "bought price": int(sale["sell price"]) / 2,
+                        "bought id": random.randint(20, 30),
+                        "sell date": sale["sell date"],
+                        "sell price": sale["sell price"],
+                        "quantity sold": sale["quantity"]})
+                # write the row again from the sales file
+                else:
+                    writer.writerow(sale)
+                    
+        # this makes sure that it updates the sales file
+        shutil.move(tempfile.name, filename)
+        
 
 # This reports the revenue making sure the date is the same ass the sell date in sales file
     def get_revenue(self, date_today):
         total_sum = 0
         products_sold = {}  # Dictionary to store products and their total prices
-        rev_made = False  # Initialize rev_made to False
+        rev_made = False  # set rev_made to False
 
         with open(self.filename, "r") as revenue:
             reader = csv.DictReader(revenue)
@@ -184,11 +205,11 @@ class Inventory:
             print(f"There is no revenue made as of today: {date_today}")
             return 0  # Return 0 when no revenue is made
             
-# This reports the profit making sure the date is the same ass the sell date in sales file
+    # This reports the profit making sure the date is the same ass the sell date in sales file
     def get_profit(self, date_today):
         total_profit = 0
         products_sold = {}  # Dictionary to store products and their profits
-        prof_made = False  # Initialize prof_made to False
+        prof_made = False  # set prof_made to False
 
         with open(self.filename, "r") as profit:
             reader = csv.DictReader(profit)
