@@ -32,7 +32,7 @@ class CsvReader:
                 for row in today:
                     print(f"This is the current date: {row}")
         if not os.path.exists(self.filename):
-            print("[bold red]ERROR:[/bold red]: File not available")
+            print("[bold red]ERROR:[/bold red] File not available")
 
 # this is creating a today date if doesnt exists and put it in a file: info_today.csv
     def create_date_today(self):

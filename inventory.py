@@ -98,7 +98,7 @@ class Inventory:
 
         # checks if file exists and does a status check if the file is empty (== 0)
         if not os.path.exists(self.filename) or os.stat(self.filename).st_size == 0:
-            print("[bold red]ERROR:[/bold red]: Inventory file is empty or does not exist.")
+            print("[bold red]ERROR:[/bold red] Inventory file is empty or does not exist.")
             return
         # opens the inventory file and the temp file
         with open(self.filename, "r+", newline="") as sell_prod, tempfile:
@@ -111,14 +111,15 @@ class Inventory:
                     if product_name == lines["product name"]:
                         prod_found = True
                         product_quantity = lines["quantity"]
+                        price_sold = int(quantity) * int(lines["sell price"]) 
 
                         # checks if the quantity is more than quantity in inventory
                         if quantity > int(product_quantity):
-                            print(f"[bold red]ERROR:[/bold red]: Not enough {product_name} in stock. Available quantity: {product_quantity}")
+                            print(f"[bold red]ERROR:[/bold red] Not enough {product_name} in stock. Available quantity: {product_quantity}")
                             return 
                         # this updates the stock if a sale has been made and add it to sales.csv
                         new_stock = int(product_quantity) - quantity
-                        print(f"[bold dark_green]-UPDATING STOCK-:[/bold dark_green]\nProduct: {lines['product name']}\nQuantity sold: {quantity}\nCurrent quantity: {new_stock}")
+                        print(f"[bold dark_green]-UPDATING STOCK-[/bold dark_green]\nProduct: {lines['product name']}\nQuantity sold: {quantity}\nCurrent quantity: {new_stock}\nPrice sold: {price_sold} dollars")
                         
                         row = {
                             "id": lines["id"],
@@ -261,7 +262,7 @@ class Inventory:
         plt.plot(dates, revenue_datay, marker="s", linestyle="-", label="Revenue")
         #plot graph titles
         plt.xlabel("Date sold")
-        plt.ylabel("Price")
+        plt.ylabel("Price in dollars")
         plt.title("CSV Data Graph")
         # plot layout
         plt.legend()
