@@ -30,26 +30,49 @@ In the directory there is a file called:
 
         requirements.txt
 
-As we need a couple of modules in this project you can pip install the information in that file.
+As we need a couple of modules in this project, you can ```pip install``` the information in that file.
 
 Use:
 
-        pip freeze > requirements.txt
+        pip install -r requirements.txt
 
 To install everything needed.
 
 ---
 
-If you only want to use the modules needed for this project we need do this first:
+If you want to use a virtual enviroment ```(venv)``` for this project then do the following.
 
-        pip install pipreqs
+        python3 -m venv (your venv_name)
+Example:
 
-Next we need to do this:
+        python3 -m venv superpy
+This will create a virtual environment, to acces the ```(venv)``` input the following:
 
-        pipreqs --force
+##### Windows
 
-With this we can make sure we only use the modules needed for this project.
+        venv_name\Scripts\activate
 
+##### Mac/Linux
+        source venv_name/bin/activate
+
+You can regocnize when you are in the ```venv``` with the following example
+
+        (your_venv_name) yourcomputername:~/Winc/superpy$ 
+**Follow the previous steps to install everything needed the for the project.**
+
+
+**With this it allows you to use the project with only the necessary packages.**
+
+---
+Use the:
+
+        python3 -m pip check
+To make sure you have everything needed.
+
+After the install and everything is checked this should come out in your terminal:
+
+        No broken requirements found.
+        
 ###### [Page-Up](#contents)
 ---
 ## Files 
