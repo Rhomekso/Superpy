@@ -3,6 +3,9 @@
 ## Contents
 
 - [Requirements](#requirements)
+
+    - [Check](#check)
+
 - [Files](#files)
 - [Command line interface](#command-line-interface)
 - [Examples](#examples)
@@ -46,13 +49,13 @@ If you want to use a virtual enviroment ```(venv)``` for this project then do th
 Example:
 
         python3 -m venv superpy
-This will create a virtual environment, to acces the ```(venv)``` input the following:
+This will create a virtual environment, to acces the ```venv``` input the following:
 
-##### Windows
+##### On Windows
 
         venv_name\Scripts\activate
 
-##### Mac/Linux
+##### On Mac/Linux
         source venv_name/bin/activate
 
 You can regocnize when you are in the ```venv``` with the following example
@@ -60,10 +63,18 @@ You can regocnize when you are in the ```venv``` with the following example
         (your_venv_name) yourcomputername:~/Winc/superpy$ 
 **Follow the previous steps to install everything needed the for the project.**
 
-
-**With this it allows you to use the project with only the necessary packages.**
+###### ***With this it allows you to use the project with only the necessary packages.***
 
 ---
+#### To exit the ```venv```
+
+**Input:**
+
+        deactivate
+
+---
+
+### Check
 Use the:
 
         python3 -m pip check
