@@ -2,6 +2,7 @@
 import argparse
 from rich import print
 from inventory import *
+from csv_reader import *
 
 
 # Do not change these lines.
@@ -58,6 +59,7 @@ subparser_buy.add_argument("--expiration", help="expiration date", type=str, req
 subparser_sell = subparsers.add_parser("sell", help="Selling a product")
 subparser_sell.add_argument("--product", help="wich product", type=str, required=True)
 subparser_sell.add_argument("--quantity", help="desired quantity", type=int, required=True)
+subparser_sell.add_argument("--sold_price", help="desired price", type=float, required=True)
 
 args = parser.parse_args()
 
@@ -115,7 +117,8 @@ if __name__ == "__main__":
     if args.command == "sell":
         prod_quantity = args.quantity
         prod_name = args.product
-        prod_sell = inventory.sell_product(prod_name, prod_quantity)
+        sold_price = args.sold_price
+        prod_sell = inventory.sell_product(prod_name, prod_quantity, sold_price)
 
 # shows inventory information
     if args.inven:

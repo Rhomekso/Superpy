@@ -91,7 +91,7 @@ class Inventory:
                                 'quantity': quantity})
 
 # this is selling a product
-    def sell_product(self, product_name, quantity):
+    def sell_product(self, product_name, quantity, sold_price):
         filename = "inventory.csv"
         tempfile = NamedTemporaryFile(mode="w", delete=False)
         fieldnames = ['id', 'product name', 'buy date', 'sell price', 'expiration date', 'quantity']
@@ -111,7 +111,7 @@ class Inventory:
                     if product_name == lines["product name"]:
                         prod_found = True
                         product_quantity = lines["quantity"]
-                        price_sold = int(quantity) * int(lines["sell price"]) 
+                        price_sold = quantity * sold_price
 
                         # checks if the quantity is more than quantity in inventory
                         if quantity > int(product_quantity):
@@ -125,11 +125,11 @@ class Inventory:
                             "id": lines["id"],
                             "product name": lines["product name"],
                             "buy date": lines["buy date"],
-                            "sell price": lines["sell price"],
+                            "sell price": sold_price,
                             "expiration date": lines["expiration date"],
                             "quantity": new_stock
                         }
-                        self.add_sale_product(row, quantity)
+                        self.add_sale_product(row, quantity, sold_price)
                         # if the new stock reaches 0 stop iterating over product and continue
                         if  new_stock == 0:
                             print(f"[bold red]ERROR:[/bold red] {product_name} out of stock, quantity: {new_stock}")
@@ -147,7 +147,7 @@ class Inventory:
             shutil.move(tempfile.name, filename)
 
     # this add the sold product to the sales.csv
-    def add_sale_product(self, sale_record, quantity_sold):
+    def add_sale_product(self, sale_record, quantity_sold, sold_price): #add parameter for sold price
         filename = "sales.csv"
         tempfile = NamedTemporaryFile(mode="w", delete=False)
         fieldnames = ["id", "product name", "bought price", "bought id", "sell date", "sell price", "quantity sold"]
@@ -163,10 +163,10 @@ class Inventory:
                     writer.writerow({
                         "id": sale_record["id"],
                         "product name": sale["product name"],
-                        "bought price": int(sale["sell price"]) / 2,
+                        "bought price": sale["bought price"],
                         "bought id": random.randint(20, 30),
                         "sell date": sale["sell date"],
-                        "sell price": sale["sell price"],
+                        "sell price": sold_price,
                         "quantity sold": sale["quantity"]})
                 # write the row again from the sales file
                 else:
