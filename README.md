@@ -214,12 +214,11 @@ This also puts information given ,to ``sales.csv`` file
 
 for example:
 ```python
-python3 main.py sell --product orange --quantity 10
+python3 main.py sell --product orange --quantity 10 --sold_price 2
 ```
 ###### [Page-Up](#contents)
 
 ## **Finally**
-
 
 
 With a small preview of what the program can do let's move to the help information
