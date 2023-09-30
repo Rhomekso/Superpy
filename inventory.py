@@ -65,7 +65,7 @@ class Inventory:
 
 # this is buying a product 
     def buy_product(self, product_name, price, expiration_date, quantity, today):
-        fieldnames = ['id', 'product name','buy date','sell price','expiration date','quantity']
+        fieldnames = ['id', 'product name','buy date','bought price','expiration date','quantity']
         with open(self.filename, "r+", newline="") as buying_prod:
             writer = csv.DictWriter(buying_prod, fieldnames=fieldnames, delimiter=",")
             # checks if the file exists otherwise makes a header and buys the product
@@ -75,7 +75,7 @@ class Inventory:
                 writer.writerow({'id': id, 
                                 'product name': product_name,
                                 'buy date': today, 
-                                'sell price': price, 
+                                'bought price': price, 
                                 'expiration date': expiration_date, 
                                 'quantity': quantity})
             # This adds it to the final line of the inventory file
@@ -86,7 +86,7 @@ class Inventory:
                 writer.writerow({'id': id, 
                                 'product name': product_name,
                                 'buy date': today, 
-                                'sell price': price, 
+                                'bought price': price, 
                                 'expiration date': expiration_date, 
                                 'quantity': quantity})
 
@@ -94,7 +94,7 @@ class Inventory:
     def sell_product(self, product_name, quantity, sold_price):
         filename = "inventory.csv"
         tempfile = NamedTemporaryFile(mode="w", delete=False)
-        fieldnames = ['id', 'product name', 'buy date', 'sell price', 'expiration date', 'quantity']
+        fieldnames = ['id', 'product name', 'buy date', 'bought price', 'expiration date', 'quantity']
 
         # checks if file exists and does a status check if the file is empty (== 0)
         if not os.path.exists(self.filename) or os.stat(self.filename).st_size == 0:
@@ -125,10 +125,11 @@ class Inventory:
                             "id": lines["id"],
                             "product name": lines["product name"],
                             "buy date": lines["buy date"],
-                            "sell price": sold_price,
+                            "bought price": sold_price,
                             "expiration date": lines["expiration date"],
                             "quantity": new_stock
                         }
+
                         self.add_sale_product(row, quantity, sold_price)
                         # if the new stock reaches 0 stop iterating over product and continue
                         if  new_stock == 0:
@@ -137,6 +138,7 @@ class Inventory:
                         writer.writerow(row)
                         
                     else:
+                        # this adds the row if its not in the file ->inventory.csv
                         writer.writerow(lines)
                         # when product is not in file send error message
                 if prod_found == False:
@@ -156,22 +158,35 @@ class Inventory:
             writer = csv.DictWriter(tempfile, fieldnames=fieldnames, delimiter=",")
             reader = csv.DictReader(sales, fieldnames=fieldnames, delimiter=",")
             # if inventory product is the same as sales product
+            added = False
+            count = 0 #starts the count for the id
             for sale in reader:
+                count += 1 #updates the count for each product id
                 if sale_record["product name"] == sale["product name"]:
                     sale["quantity"] = str(int(sale["quantity sold"]) + quantity_sold)
                     # then update the row
                     writer.writerow({
-                        "id": sale_record["id"],
+                        "id": sale["id"],
                         "product name": sale["product name"],
-                        "bought price": sale["bought price"],
+                        "bought price": sale["bought price"], # can i grab this from the inventory file ?
                         "bought id": random.randint(20, 30),
                         "sell date": sale["sell date"],
                         "sell price": sold_price,
                         "quantity sold": sale["quantity"]})
+                    added = True
                 # write the row again from the sales file
                 else:
                     writer.writerow(sale)
-                    
+            # if the product is not in the inventory then add new
+            if added == False:
+                writer.writerow({
+                        "id": count,
+                        "product name": sale_record["product name"],
+                        "bought price": sale_record["bought price"], # can i grab this from the inventory file ?
+                        "bought id": random.randint(20, 30),
+                        "sell date": sale_record["buy date"],
+                        "sell price": sold_price,
+                        "quantity sold": sale_record["quantity"]})
         # this makes sure that it updates the sales file
         shutil.move(tempfile.name, filename)
         
